@@ -23,7 +23,7 @@ from urllib.parse import quote
 import sys
 from io import StringIO
 
-import numpy as np
+from openpyxl import Workbook
 
 from playwright.sync_api import sync_playwright
 nome_usuario = os.environ.get('USERNAME') or os.environ.get('USER')
@@ -88,6 +88,15 @@ def close_aba():
     keyboard.release("ctrl")
     #time.sleep(2)
 
+def gerar_modelo_excell(caminho):
+    somente_pasta = os.path.dirname(caminho)
+    if os.path.exists(somente_pasta):
+        colunas = ["telefone", "nome", "msg", "img-1", "img-msg-1", "img-2", "img-msg-2", "arq-1", "arq-msg-1"]
+        wb = Workbook()
+        ws = wb.active
+        ws.append(colunas)
+        wb.save(caminho)
+        
 def open_whats(df, windows):
     windows['-ENVIAR-'].update(disabled=True)
 
@@ -214,7 +223,8 @@ layout = [
     ],
     [[sg.Text("Capturar eventos:")], [sg.Multiline(size=(58, 5), disabled=True, key="-TEXTAREA-")]],
     [
-        sg.Button("Enviar", key='-ENVIAR-')
+        sg.Button("Enviar", key='-ENVIAR-'),
+        sg.Button("Gerar modelo", key="-GERAR_MODELO_EXCEL-")
     ]
 
 ]
@@ -240,8 +250,16 @@ while True:
         else:
             thread = threading.Thread(target=open_whats, args=(df, windows, ), daemon=True)
             thread.start()
-    
-    if (values["-FOLDER-"] != "" or values["-FOLDER-"] != None) and event != '-ENVIAR-':
+    elif event == '-GERAR_MODELO_EXCEL-':
+        caminho_arquivo = sg.popup_get_file(
+            "Escolha onde salvar o arquivo",
+            save_as=True, 
+            file_types=(("excell", "*.xlsx"),)
+        )
+        if caminho_arquivo != None:
+            gerar_modelo_excell(caminho_arquivo)
+
+    if (values["-FOLDER-"] != "" or values["-FOLDER-"] != None) and event != '-ENVIAR-' and event != '-GERAR_MODELO_EXCEL-':
         folder = values['-FOLDER-']
         folder = os.path.abspath(folder)
 
