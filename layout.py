@@ -1,7 +1,9 @@
-#================================
-#Author: André Luiz
-#Data: 27/12/2024
-#===============================
+"""
+===============================================
+@Author: André Luiz
+Data Criação: 27/12/2024
+===============================================
+"""
 
 import PySimpleGUI as sg
 import pandas as pd
@@ -12,8 +14,6 @@ import re
 import webbrowser as web
 import time
 
-import pyperclip
-import keyboard
 from PIL import Image
 import win32clipboard
 import win32con
@@ -44,9 +44,6 @@ def processar_numero(texto, numero_inicial):
 
     return numero
 
-def copy_msg(caminho_arquivo):
-      pyperclip.copy(caminho_arquivo)
-
 def enviar_msg(page, msg):
     page.fill('xpath=/html/body/div[1]/div/div/div[3]/div/div[2]/div[2]/span/div/div/div/div[2]/div/div[1]/div[3]/div/div/div[2]/div[1]/div[1]', msg)
     page.press('xpath=/html/body/div[1]/div/div/div[3]/div/div[2]/div[2]/span/div/div/div/div[2]/div/div[1]/div[3]/div/div/div[2]/div[1]/div[1]', 'Enter')
@@ -67,27 +64,6 @@ def copy_image_to_clipboard(image_path):
     win32clipboard.SetClipboardData(win32con.CF_DIB, data)
     win32clipboard.CloseClipboard()
 
-def press_keyboard():
-    #time.sleep(2)
-    keyboard.press("ctrl")
-    keyboard.press("v")
-    keyboard.release("v")
-    keyboard.release("ctrl")
-    keyboard.press("ctrl")
-    keyboard.press("enter")
-    keyboard.release("enter")
-    keyboard.release("ctrl")
-    #time.sleep(2)
-    #keyboard.press("enter")
-
-def close_aba():
-    time.sleep(1)
-    keyboard.press("ctrl")
-    keyboard.press("w")
-    keyboard.release("w")
-    keyboard.release("ctrl")
-    #time.sleep(2)
-
 def gerar_modelo_excell(caminho):
     somente_pasta = os.path.dirname(caminho)
     if os.path.exists(somente_pasta):
@@ -96,7 +72,7 @@ def gerar_modelo_excell(caminho):
         ws = wb.active
         ws.append(colunas)
         wb.save(caminho)
-        
+
 def open_whats(df, windows):
     windows['-ENVIAR-'].update(disabled=True)
 
@@ -123,20 +99,11 @@ def open_whats(df, windows):
         page.goto('https://web.whatsapp.com/')
 
         # Aguardando que o usuário escaneie o QR code
-        print("Escaneie o QR code para autenticar o WhatsApp Web...")
+        # print("Escaneie o QR code para autenticar o WhatsApp Web...")
+        time.sleep(10)
         page.wait_for_selector("xpath=/html/body/div[1]/div/div/div[3]/div/div[3]/header/header/div/div[1]/h1")  # Espera carregar a interface principal
 
-
         for cont in range(df.shape[0]):
-            #if not pd.isnull(df["msg"].iloc[cont]):         
-                #web.open(f"https://web.whatsapp.com/send?phone={df['telefone'].iloc[cont]}&text={quote(df["msg"].iloc[cont])}")
-                #page.goto(f'https://web.whatsapp.com/send?phone={df['telefone'].iloc[cont]}&text={quote()}')
-                #page.wait_for_selector('xpath=/html/body/div[1]/div/div/div[3]/div/div[4]/div/footer/div[1]/div/span/div/div[2]/div[1]/div[2]/div[1]/p')
-                #time.sleep(11)
-                #keyboard.press("enter")
-                #keyboard.release("enter")
-            #else: 
-                #web.open(f"https://web.whatsapp.com/send?phone={df['telefone'].iloc[cont]}")
             page.goto(f"https://web.whatsapp.com/send?phone={df['telefone'].iloc[cont]}")
             page.wait_for_selector('xpath=/html/body/div[1]/div/div/div[3]/div/div[4]/div/footer/div[1]/div/span/div/div[2]/div[1]/div[2]/div[1]/p')
                 #time.sleep(11)
@@ -156,36 +123,25 @@ def open_whats(df, windows):
                                 page.keyboard.press("Control+V")
                                 time.sleep(2)
                                 if not pd.isnull(df[f"img-msg-{cont_col}"].iloc[cont]):
-                                    #copy_msg(df[f"img-msg-{cont_col}"].iloc[cont])
-                                    #press_keyboard()
                                     enviar_msg(page, df[f"img-msg-{cont_col}"].iloc[cont])
                                 time.sleep(1)
-                                #page.keyboard.press("Control+V")
-                                #keyboard.press("enter")
-                                #keyboard.release("enter")
+                                
                         elif column == f'arq-{cont_col}':
                             if not pd.isnull(df[f"arq-{cont_col}"].iloc[cont]):
                                 time.sleep(1)
-                                #copy_msg(df[f"arq-{cont_col}"].iloc[cont])
                                 page.fill('xpath=/html/body/div[1]/div/div/div[3]/div/div[4]/div/footer/div[1]/div/span/div/div[2]/div[1]/div[2]/div[1]/p', df[f"arq-{cont_col}"].iloc[cont])
                                 page.press('xpath=/html/body/div[1]/div/div/div[3]/div/div[4]/div/footer/div[1]/div/span/div/div[2]/div[1]/div[2]', 'Enter')
-                                #press_keyboard()
+
                                 time.sleep(2)
                                 if not pd.isnull(df[f"arq-msg-{cont_col}"].iloc[cont]):
-                                    #copy_msg(df[f"arq-msg-{cont_col}"].iloc[cont])
-                                    #press_keyboard()
-                                    #enviar_msg(page, df[f"arq-msg-{cont_col}"].iloc[cont])
                                     page.fill('xpath=/html/body/div[1]/div/div/div[3]/div/div[4]/div/footer/div[1]/div/span/div/div[2]/div[1]/div[2]/div[1]/p', df[f"arq-msg-{cont_col}"].iloc[cont])
                                 page.press('xpath=/html/body/div[1]/div/div/div[3]/div/div[4]/div/footer/div[1]/div/span/div/div[2]/div[1]/div[2]', 'Enter')
                                 
                                 time.sleep(1)
-                                #keyboard.press("enter")
-                                #keyboard.release("enter")
                 except:
                     print(f"informação da coluna {column} não enviada para {df['telefone'].iloc[cont]}")
             time.sleep(1)
-            #close_aba()
-            #windows['-TABLE-'].update(select_rows = cont+1)
+            
             windows['-TABLE-'].update(row_colors=[[cont,'red']])
             windows['-ENVIADA-'].update(value=f'{cont+1}/{df.shape[0]}')
             windows['-ENVIAR-'].update(disabled=True)
@@ -243,8 +199,6 @@ while True:
 
 
     elif event == '-ENVIAR-': 
-        #folder = values['-FOLDER-']
-        #if folder != "" or folder != None:
         if not df.shape[0] > 0:
             sg.popup_error("Primeiro carregue os arquivos")
         else:

@@ -1,6 +1,6 @@
 # Plataforma de Automação para Envio de Mensagens no WhatsApp
 
-Esta plataforma permite a **automação do envio de mensagens** para o WhatsApp, facilitando o envio de **mensagens de texto**, **imagens** e **arquivos**. Para enviar outros tipos de arquivos, recomenda-se que sejam armazenados no Google Drive e inseridos como links na planilha de Excel.
+Esta plataforma permite a **automação do envio de mensagens** para o WhatsApp Web no navegador Chrome, facilitando o envio de **mensagens de texto**, **imagens** e **arquivos**. Para enviar outros tipos de arquivos, recomenda-se que sejam armazenados no Google Drive e inseridos como links na planilha de Excel.
 
 ## Estrutura da Planilha
 No botão [Gerar modelo] gera um modelo de excell com as informações que a plataforma ler.
