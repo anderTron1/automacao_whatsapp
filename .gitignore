@@ -1,0 +1,6 @@
+build/
+dist/
+*.xlsx
+main.py
+venv/
+arq teste/
